@@ -23,6 +23,8 @@ class Attendant(QtWidgets.QWidget):
         self.rfidinput = QtWidgets.QLineEdit()
         self.rfidinput.setFocus()
         self.rfidinput.setFixedWidth(100)
+        font = QtGui.QFont("Times", 14, QtGui.QFont.Helvetica)
+        self.rfidinput.setFont(font)
         teamInfoLayout = QtWidgets.QVBoxLayout()
         teamInfoLayout.addWidget(team151Label)
         teamInfoLayout.addWidget(clock)
