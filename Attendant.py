@@ -16,7 +16,7 @@ class Attendant(QtWidgets.QWidget):
         team151Label = QtWidgets.QLabel("Team 151 Attendant")
         utc_fmt = "yyyy-MM-ddTHH:mm:ss.zzzZ"
         datetimeLabel = QtWidgets.QLabel(QDateTime().currentDateTime().toString())
-        self.attendeeLabel = QtWidgets.QLabel("Kevin Quan")
+        self.attendeeLabel = QtWidgets.QLabel("")
         self.attendeeStatusLabel = QtWidgets.QLabel("Empty")
         clock = DigitalClock()
 
