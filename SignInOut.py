@@ -14,7 +14,7 @@ class SignInOut(QObject):
     Season = "S2019-2020"
     SignIn = "SignIn"
     SignOut = "SignOut"
-    AlreadySignOut = "Sorry, You have already Sign Out!"
+    AlreadySignOut = "Sorry, You have already signed out!"
     def __init__(self):
         self.cred = credentials.Certificate("team151attendant-firebase-adminsdk-6n2zi-b3551c705a.json")
         firebase_admin.initialize_app(self.cred)
