@@ -11,14 +11,21 @@ from PySide2.QtCore import QDateTime, QTimeZone, Signal, Slot, QObject
 from AttnSignal import AttnSignal
 
 class SignInOut(QObject):
-    Season = "S2019-2020"
+    Season = "Season"
     SignIn = "SignIn"
     SignOut = "SignOut"
     AlreadySignOut = "Sorry, You have already signed out!"
+    Members = "members"
+    AppConfig = "AppConfig"
+
     def __init__(self):
         self.cred = credentials.Certificate("team151attendant-firebase-adminsdk-6n2zi-b3551c705a.json")
         firebase_admin.initialize_app(self.cred)
         self.db = firestore.client()
+
+        # Get the Season document name from the AppConfig
+        appconfig = self.db.collection(self.Members).document(self.AppConfig).get()
+        self.season = appconfig.get(self.Season)
         self.reportstatus = AttnSignal()
         self.reportname = AttnSignal()
     
@@ -26,7 +33,7 @@ class SignInOut(QObject):
     def process(self, rfid):
         print(rfid)
         self.reportstatus.signal.emit(rfid)
-        members = self.db.collection(u'members')
+        members = self.db.collection(Members)
         docref = members.document(rfid)
         try:
             doc = docref.get()
@@ -39,9 +46,9 @@ class SignInOut(QObject):
                 signdatetime = now.toPython()
                 if attnhistory is not None:
                     signtype = self.SignIn
-                    doc = attnhistory.document(self.Season).get()
+                    doc = attnhistory.document(self.season).get()
                     if not doc.exists:
-                        attnhistory.document(self.Season).set({
+                        attnhistory.document(self.season).set({
                             logdate : {
                                 signtype : signdatetime
                             }

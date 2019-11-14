@@ -17,7 +17,7 @@ class Attendant(QtWidgets.QWidget):
         utc_fmt = "yyyy-MM-ddTHH:mm:ss.zzzZ"
         datetimeLabel = QtWidgets.QLabel(QDateTime().currentDateTime().toString())
         self.attendeeLabel = QtWidgets.QLabel("")
-        self.attendeeStatusLabel = QtWidgets.QLabel("Empty")
+        self.attendeeStatusLabel = QtWidgets.QLabel("")
         clock = DigitalClock()
 
         self.rfidinput = QtWidgets.QLineEdit()
