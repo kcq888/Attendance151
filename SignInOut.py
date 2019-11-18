@@ -1,4 +1,5 @@
 
+import os
 import datetime
 # Firebase Imports
 import firebase_admin
@@ -17,9 +18,10 @@ class SignInOut(QObject):
     AlreadySignOut = "Sorry, You have already signed out!"
     Members = "members"
     AppConfig = "AppConfig"
+    Hours24 = 24*60*60
 
     def __init__(self):
-        self.cred = credentials.Certificate("team151attendant-firebase-adminsdk-6n2zi-b3551c705a.json")
+        self.cred = credentials.Certificate(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"))
         firebase_admin.initialize_app(self.cred)
         self.db = firestore.client()
 
@@ -58,7 +60,7 @@ class SignInOut(QObject):
                         data = doc.get(logdate + "." + self.SignIn)
                         prevsignin = datetime.datetime(data.year, data.month, data.day, data.hour, data.minute, data.second)
                         delta = signdatetime - prevsignin
-                        if (delta.total_seconds() < 24*60*60):
+                        if (delta.total_seconds() < self.Hours24):
                             signtype = self.SignOut
                         else:
                             signtype = self.SignIn
