@@ -10,7 +10,7 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     app.setFont(timesFont)
     attendant = Attendant()
-    attendant.show()
+    attendant.showFullScreen()
     app.exec_()
 
 
