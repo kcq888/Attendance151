@@ -14,13 +14,15 @@ class Attendant(QtWidgets.QWidget):
         imageLabel = QtWidgets.QLabel()
         imageLabel.setPixmap(pixmap)
         team151Label = QtWidgets.QLabel("Team 151 Attendant")
+        team151Label.setFixedHeight(50)
+        team151Label.setFixedWidth(300)
         utc_fmt = "yyyy-MM-ddTHH:mm:ss.zzzZ"
         datetimeLabel = QtWidgets.QLabel(QDateTime().currentDateTime().toString())
         self.attendeeLabel = QtWidgets.QLabel("")
         self.attendeeStatusLabel = QtWidgets.QLabel("")
         clock = DigitalClock()
         clock.setFixedWidth(200)
-        clock.setFixedHeight(100)
+        clock.setFixedHeight(80)
 
         self.rfidinput = QtWidgets.QLineEdit()
         self.rfidinput.setFocus()
