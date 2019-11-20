@@ -19,6 +19,8 @@ class Attendant(QtWidgets.QWidget):
         self.attendeeLabel = QtWidgets.QLabel("")
         self.attendeeStatusLabel = QtWidgets.QLabel("")
         clock = DigitalClock()
+        clock.setFixedWidth(200)
+        clock.setFixedHeight(100)
 
         self.rfidinput = QtWidgets.QLineEdit()
         self.rfidinput.setFocus()
