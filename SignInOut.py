@@ -35,7 +35,7 @@ class SignInOut(QObject):
     def process(self, rfid):
         print(rfid)
         self.reportstatus.signal.emit(rfid)
-        members = self.db.collection(Members)
+        members = self.db.collection(self.Members)
         docref = members.document(rfid)
         try:
             doc = docref.get()
