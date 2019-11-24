@@ -6,11 +6,10 @@ from PySide2.QtCore import QDateTime, QTimeZone, Signal, Slot
 from Attendant import Attendant
 
 if __name__ == "__main__":
-    timesFont = QtGui.QFont("Times", 28, QtGui.QFont.Bold)
     app = QtWidgets.QApplication(sys.argv)
-    app.setFont(timesFont)
     attendant = Attendant()
     attendant.showFullScreen()
+    attendant.show()
     app.exec_()
 
 

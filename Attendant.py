@@ -9,6 +9,9 @@ class Attendant(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
         super(Attendant, self).__init__(parent)
+        font = QtGui.QFont("Verdana", 20, QtGui.QFont.Bold)
+        font.setStyleHint(QtGui.QFont.System)
+        
         pixmap = QtGui.QPixmap("./assets/images/2018_Logo.png")
         pixmap = pixmap.scaled(100, 100)
         imageLabel = QtWidgets.QLabel()
@@ -16,10 +19,13 @@ class Attendant(QtWidgets.QWidget):
         team151Label = QtWidgets.QLabel("Team 151 Attendant")
         team151Label.setFixedHeight(50)
         team151Label.setFixedWidth(300)
+        team151Label.setFont(font)
         utc_fmt = "yyyy-MM-ddTHH:mm:ss.zzzZ"
         datetimeLabel = QtWidgets.QLabel(QDateTime().currentDateTime().toString())
         self.attendeeLabel = QtWidgets.QLabel("")
+        self.attendeeLabel.setFont(font)
         self.attendeeStatusLabel = QtWidgets.QLabel("")
+        self.attendeeStatusLabel.setFont(font)
         clock = DigitalClock()
         clock.setFixedWidth(200)
         clock.setFixedHeight(80)
@@ -27,7 +33,7 @@ class Attendant(QtWidgets.QWidget):
         self.rfidinput = QtWidgets.QLineEdit()
         self.rfidinput.setFocus()
         self.rfidinput.setFixedWidth(100)
-        font = QtGui.QFont("Times", 14, QtGui.QFont.Helvetica)
+        font = QtGui.QFont("Verdana", 14, QtGui.QFont.Helvetica)
         self.rfidinput.setFont(font)
         teamInfoLayout = QtWidgets.QVBoxLayout()
         teamInfoLayout.addWidget(team151Label)
