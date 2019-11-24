@@ -34,6 +34,8 @@ class SignInOut(QObject):
     @Slot(str)
     def process(self, rfid):
         print(rfid)
+        if refid == '':
+            return
         self.reportstatus.signal.emit(rfid)
         members = self.db.collection(self.Members)
         docref = members.document(rfid)
