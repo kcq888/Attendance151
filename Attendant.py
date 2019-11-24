@@ -9,7 +9,7 @@ class Attendant(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
         super(Attendant, self).__init__(parent)
-        font = QtGui.QFont("Verdana", 20, QtGui.QFont.Bold)
+        font = QtGui.QFont("Verdana", 16, QtGui.QFont.Bold)
         font.setStyleHint(QtGui.QFont.System)
         
         pixmap = QtGui.QPixmap("./assets/images/2018_Logo.png")
