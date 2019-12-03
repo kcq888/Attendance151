@@ -34,7 +34,7 @@ class SignInOut(QObject):
     @Slot(str)
     def process(self, rfid):
         print(rfid)
-        if refid == '':
+        if rfid == '':
             return
         self.reportstatus.signal.emit(rfid)
         members = self.db.collection(self.Members)
@@ -70,7 +70,7 @@ class SignInOut(QObject):
                             data = doc.get(logdate + "." + self.SignOut)
                             signtype = self.AlreadySignOut
                         except KeyError:
-                            docref = attnhistory.document(self.Season)
+                            docref = attnhistory.document(self.season)
                             docref.update({
                                 logdate + "." + signtype : signdatetime
                             })
