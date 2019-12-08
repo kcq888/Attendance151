@@ -50,8 +50,9 @@ class SignInOut(QObject):
                 signdatetime = now.toPython()
                 if attnhistory is not None:
                     signtype = self.SignIn
-                    doc = attnhistory.document(self.season).get()
-                    if not doc.exists:
+                    # get the document snapshot
+                    docSnapshot = attnhistory.document(self.season).get()
+                    if not docSnapshot.exists:
                         attnhistory.document(self.season).set({
                             logdate : {
                                 signtype : signdatetime
@@ -59,20 +60,30 @@ class SignInOut(QObject):
                         })
                         self.reportstatus.signal.emit(signtype)
                     else:
-                        data = doc.get(logdate + "." + self.SignIn)
-                        prevsignin = datetime.datetime(data.year, data.month, data.day, data.hour, data.minute, data.second)
-                        delta = signdatetime - prevsignin
-                        if (delta.total_seconds() < self.Hours24):
-                            signtype = self.SignOut
+                        data = docSnapshot.to_dict()
+                        if logdate in data.keys():
+                            print(data)
+                            data = docSnapshot.get(logdate + "." + self.SignIn)
+                            prevsignin = datetime.datetime(data.year, data.month, data.day, data.hour, data.minute, data.second)
+                            delta = signdatetime - prevsignin
+                            if (delta.total_seconds() < self.Hours24):
+                                signtype = self.SignOut
+                            else:
+                                signtype = self.SignIn
+                            try:
+                                data = docSnapshot.get(logdate + "." + self.SignOut)
+                                signtype = self.AlreadySignOut
+                            except KeyError:
+                                docref = attnhistory.document(self.season)
+                                docref.update({
+                                    logdate + "." + signtype : signdatetime
+                                })
                         else:
-                            signtype = self.SignIn
-                        try:
-                            data = doc.get(logdate + "." + self.SignOut)
-                            signtype = self.AlreadySignOut
-                        except KeyError:
                             docref = attnhistory.document(self.season)
                             docref.update({
-                                logdate + "." + signtype : signdatetime
+                                logdate : {
+                                    signtype : signdatetime
+                                }
                             })
                         self.reportstatus.signal.emit(signtype)
             else:
