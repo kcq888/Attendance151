@@ -20,8 +20,9 @@ class Attendant(QtWidgets.QWidget):
         team151Label.setFixedHeight(50)
         team151Label.setFixedWidth(300)
         team151Label.setFont(font)
-        utc_fmt = "yyyy-MM-ddTHH:mm:ss.zzzZ"
-        datetimeLabel = QtWidgets.QLabel(QDateTime().currentDateTime().toString())
+        utc_fmt = "MM-dd-yyyy"
+        datetimeLabel = QtWidgets.QLabel(QDateTime().currentDateTime().toString(utc_fmt))
+        datetimeLabel.setFont(font)
         self.attendeeLabel = QtWidgets.QLabel("")
         self.attendeeLabel.setFont(font)
         self.attendeeStatusLabel = QtWidgets.QLabel("")
@@ -35,6 +36,11 @@ class Attendant(QtWidgets.QWidget):
         self.rfidinput.setFixedWidth(100)
         font = QtGui.QFont("Verdana", 14, QtGui.QFont.Helvetica)
         self.rfidinput.setFont(font)
+
+        teamImageLayout = QtWidgets.QVBoxLayout()
+        teamImageLayout.addWidget(imageLabel)
+        teamImageLayout.addWidget(datetimeLabel)
+
         teamInfoLayout = QtWidgets.QVBoxLayout()
         teamInfoLayout.addWidget(team151Label)
         teamInfoLayout.addWidget(clock)
@@ -46,7 +52,7 @@ class Attendant(QtWidgets.QWidget):
         mainLayout = QtWidgets.QGridLayout()
         mainLayout.rowCount = 3
         mainLayout.columnCount = 2
-        mainLayout.addWidget(imageLabel, 0, 0)
+        mainLayout.addLayout(teamImageLayout, 0, 0)
         mainLayout.addLayout(teamInfoLayout, 0, 1)
         mainLayout.addLayout(memberLayout, 2, 1)
         mainLayout.addWidget(self.rfidinput, 2, 0)
