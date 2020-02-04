@@ -41,6 +41,7 @@ class SignInOut(QObject):
         # get the document snapshot
         docSnapshot = attnhistory.document(self.season).get()
         if not docSnapshot.exists:
+            # No Season document
             signtype = self.SignIn
             logdate = "Log" + "{}{}{}".format(now.date().month(),now.date().day(),now.date().year())
             attnhistory.document(self.season).set({
@@ -53,43 +54,44 @@ class SignInOut(QObject):
             })
             self.reportstatus.signal.emit(signtype)
         else:
+            # Season document exist
             data = docSnapshot.to_dict()
-            if self.LastScan in data.keys():
-                print(data)
-                data = docSnapshot.get(self.LastScan)
-                if not data:
-                    logdate = "Log" + "{}{}{}".format(now.date().month(),now.date().day(),now.date().year())
-                else:
-                    if (list(data)[0] == self.SignIn):
-                        logdate = data[self.SignIn]
-                try:
-                    data = docSnapshot.get(logdate + "." + self.SignIn)
-                    prevsignin = datetime.datetime(data.year, data.month, data.day, data.hour, data.minute, data.second)
-                    delta = signdatetime - prevsignin
-                    if (delta.total_seconds() < self.Hours22):
-                        signtype = self.SignOut
-                    else:
-                        signtype = self.SignIn                        
-                except KeyError:
-                    signtype = self.SignIn
-                try:
-                    data = docSnapshot.get(logdate + "." + self.SignOut)
-                    signtype = self.AlreadySignOut
-                except KeyError:
-                    docref = attnhistory.document(self.season)
+            # empty dictionary - no data
+            logdate = "Log" + "{}{}{}".format(now.date().month(),now.date().day(),now.date().year())
+            if data:
+                # check for LastScan field
+                if self.LastScan in data.keys():
+                    lastScanData = docSnapshot.get(self.LastScan)
+                    # has LastScan data
+                    if lastScanData:
+                        if (list(lastScanData)[0] == self.SignIn):
+                            lastSignInData = docSnapshot.get(lastScanData[self.SignIn] + "." + self.SignIn)
+                            # calculate if signout is within 22 hours
+                            prevsignin = datetime.datetime(lastSignInData.year, lastSignInData.month, lastSignInData.day, lastSignInData.hour, lastSignInData.minute, lastSignInData.second)
+                            delta = signdatetime - prevsignin
+                            if (delta.total_seconds() < self.Hours22):
+                                logdate = lastScanData[self.SignIn]
+                                signtype = self.SignOut
+                            else:
+                                signtype = self.SignIn
+            try:
+                lastSignOutData = docSnapshot.get(logdate + "." + self.SignOut)
+                signtype = self.AlreadySignOut
+            except KeyError:
+                docref = attnhistory.document(self.season)
+                docref.update({
+                    logdate + "." + signtype : signdatetime
+                })
+                if (signtype == self.SignIn):
                     docref.update({
-                        logdate + "." + signtype : signdatetime
+                        self.LastScan : {
+                            signtype : logdate
+                        }
                     })
-                    if (signtype == self.SignIn):
-                        docref.update({
-                            self.LastScan : {
-                                signtype : logdate
-                            }
-                        })
-                    else:
-                        docref.update({
-                            self.LastScan : {}
-                        })
+                else:
+                    docref.update({
+                        self.LastScan : {}
+                    })
             self.reportstatus.signal.emit(signtype)
 
     @Slot(str)
