@@ -1,23 +1,23 @@
+import numpy as np
 from PySide2.QtCore import Slot, QAbstractListModel, QModelIndex, Qt
 
 class AttendantModel(QAbstractListModel):
+    Name = "Name"
+    Status = "Status"
 
     def __init__(self, parent=None) -> None:
         super().__init__(parent=parent)
-        self.headers = ["Name", "Status"]
-        self.rows = [
-            ("Peter Malony", "Sign In"),
-            ("Stephany Smith", "Sign Out"),
-            ("John Jones", "Sign In")
+        self.member_ = ""
+        self.headers = [self.Name, self.Status]
+        self.attendants = [
+            ["Peter Malony", "Sign In"],
+            ["Stephany Smith", "Sign Out"],
+            ["John Jones", "Sign In"]
         ]
-
-    @Slot(str)
-    def onRfidAccepted(self, rfid):
-        print(rfid)
 
     """ Returns the number of rows the model holds. """
     def rowCount(self, parent=QModelIndex()):
-        return len(self.rows)
+        return len(self.attendants)
 
     """ Returns the number of columns the model holds. """
     def columnCount(self, parent=QModelIndex()):
@@ -33,7 +33,7 @@ class AttendantModel(QAbstractListModel):
             if role in self.roleNames():
                 name_role = self.roleNames()[role].decode()
                 col = self.headers.index(name_role)
-                return self.rows[row][col]
+                return self.attendants[row][col]
 
     def headerData(self, section, orientation, role=Qt.DisplayRole):
         """ Set the headers to be displayed. """
@@ -44,21 +44,54 @@ class AttendantModel(QAbstractListModel):
         """ Insert a row into the model. """
         self.beginInsertRows(QModelIndex(), position, position + rows - 1)
 
-        """
         for row in range(rows):
-        self.addresses.insert(position + row, {"name":"", "address":""})
-        """
+            self.attendants.insert(position + row, ["name","status"])
+        
         self.endInsertRows()
         return True
 
     def removeRows(self, position, rows=1, index=QModelIndex()):
         """ Remove a row from the model. """
         self.beginRemoveRows(QModelIndex(), position, position + rows - 1)
-        """
-        del self.addresses[position:position+rows]
-        """
+        
+        del self.attendants[position:position+rows]
+        
         self.endRemoveRows()
         return True
+
+    def setData(self, index, name, status, role=Qt.EditRole):
+        """ Adjust the data (set it to <value>) depending on the given 
+            index and role. 
+        """
+        if role != Qt.EditRole:
+            return False
+
+        if index.isValid() and 0 <= index.row() < len(self.attendants):
+            attendant = self.attendants[index.row()]
+            attendant[0] = name
+            attendant[1] = status
+            self.dataChanged.emit(index, index)
+            return True
+        else:
+            return False
+
+    def isExist(self, name):
+        """ Find if given name already exist in the attendant list """
+        attns = np.array(self.attendants)
+        y, x = np.where(attns == name)
+        if not len(y) == 0:
+            return y[0]
+        else:
+            return None
+
+    def updateStatus(self, name, status):
+        """ Find the name in the array and use the index to update the status"""
+        row = self.isExist(name)
+        if not row == None:
+            self.attendants[row][1] = status
+            idx = self.index(row, 0, QModelIndex())
+            if idx.isValid:
+                self.dataChanged.emit(idx, idx)
 
     def flags(self, index):
         """ Set the item flags at the given index. Seems like we're 
@@ -67,7 +100,7 @@ class AttendantModel(QAbstractListModel):
         """
         if not index.isValid():
             return Qt.ItemIsEnabled
-        return Qt.ItemFlags(QAbstractTableModel.flags(self, index) |
+        return Qt.ItemFlags(QAbstractListModel.flags(self, index) |
                             Qt.ItemIsEditable)
 
     def roleNames(self):

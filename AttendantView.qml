@@ -36,10 +36,12 @@ import AttendantModel 1.0
         
         Column {
             id: appContentLeft
+            Layout.fillHeight: true
             Layout.column: 0
             Layout.row: 0
             Layout.columnSpan: 1
             Layout.minimumWidth: parent.width / 2
+            Layout.maximumWidth: parent.width / 2
             Layout.alignment: Qt.AlignTop
             Layout.margins: 20
             
@@ -93,7 +95,18 @@ import AttendantModel 1.0
                 focus: true
                 onAccepted: {
                     //console.debug("RFID: ", rfidTextField.text)
-                    attendantModel.onRfidAccepted(rfidTextField.text)
+                    attendant.onRfidAccepted(rfidTextField.text)
+                    rfidTextField.text = ""
+                }
+            }
+            RowLayout {
+                Text {
+                    id: nameText
+                    font.family: "Verdana"
+                    font.bold: true
+                    font.pointSize: 24
+                    color: "white"
+                    text: attendant.status
                 }
             }
         }

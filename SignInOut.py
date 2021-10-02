@@ -5,46 +5,39 @@ import datetime
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
-from google.cloud import storage, exceptions
+from google.cloud import exceptions
 # PySide2 Imports
-from PySide2 import QtCore
-from PySide2.QtCore import QDateTime, QTimeZone, Signal, Slot, QObject
+from PySide2.QtCore import QDateTime, Slot, QObject
 from AttnSignal import AttnSignal
 
 class SignInOut(QObject):
-    LastScan = "LastScan"
-    Season = "Season"
+    Season = "Season2020-2021"
+    AttnHistory = "AttnHistory"
+    History = "History"
     SignIn = "SignIn"
     SignOut = "SignOut"
+    LastScan = "LastScan"
     AlreadySignOut = "Sorry, You have already been signed out!"
-    Members = "members"
-    AppConfig = "AppConfig"
-    AttnHistory = "AttnHistory"
     Hours22 = 22*60*60
 
     def __init__(self):
         self.cred = credentials.Certificate(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"))
         firebase_admin.initialize_app(self.cred)
         self.db = firestore.client()
-
-        # Get the Season document name from the AppConfig
-        appconfig = self.db.collection(self.Members).document(self.AppConfig).get()
-        self.season = appconfig.get(self.Season)
         self.reportstatus = AttnSignal()
-        self.reportname = AttnSignal()
 
-    def processSignInOut(self, attnhistory):
+    def processSignInOut(self, name, attnhistory):
         utcnow = QDateTime().currentDateTimeUtc()
         now = utcnow.toLocalTime()
         signdatetime = utcnow.toPython()
+        signtype = self.SignIn
 
         # get the document snapshot
-        docSnapshot = attnhistory.document(self.season).get()
+        docSnapshot = attnhistory.document(self.History).get()
+        logdate = "Log" + "{}{}{}".format(now.date().month(),now.date().day(),now.date().year())
         if not docSnapshot.exists:
             # No Season document
-            signtype = self.SignIn
-            logdate = "Log" + "{}{}{}".format(now.date().month(),now.date().day(),now.date().year())
-            attnhistory.document(self.season).set({
+            attnhistory.document(self.History).set({
                 self.LastScan : {
                     signtype : logdate
                 },
@@ -52,12 +45,11 @@ class SignInOut(QObject):
                     signtype : signdatetime
                 }
             })
-            self.reportstatus.signal.emit(signtype)
+            self.reportstatus.signal.emit(name, signtype)
         else:
             # Season document exist
             data = docSnapshot.to_dict()
             # empty dictionary - no data
-            logdate = "Log" + "{}{}{}".format(now.date().month(),now.date().day(),now.date().year())
             if data:
                 # check for LastScan field
                 if self.LastScan in data.keys():
@@ -78,7 +70,7 @@ class SignInOut(QObject):
                 lastSignOutData = docSnapshot.get(logdate + "." + self.SignOut)
                 signtype = self.AlreadySignOut
             except KeyError:
-                docref = attnhistory.document(self.season)
+                docref = attnhistory.document(self.History)
                 docref.update({
                     logdate + "." + signtype : signdatetime
                 })
@@ -92,26 +84,27 @@ class SignInOut(QObject):
                     docref.update({
                         self.LastScan : {}
                     })
-            self.reportstatus.signal.emit(signtype)
+            self.reportstatus.signal.emit(name, signtype)
 
     @Slot(str)
     def process(self, rfid):
         print(rfid)
         if rfid == '':
             return
-        self.reportstatus.signal.emit(rfid)
-        members = self.db.collection(self.Members)
-        docref = members.document(rfid)
+        docref = self.db.collection(self.Season).document(rfid)
         try:
             doc = docref.get()
-            if (doc.exists):
+            if doc.exists:
                 name = doc.get(u'First') + " " + doc.get(u'Last')
-                self.reportname.signal.emit(name)
                 attnhistory = docref.collection(self.AttnHistory)
                 if attnhistory is not None:
                     # now process sign in and sign out
-                    self.processSignInOut(attnhistory)
+                    self.processSignInOut(name, attnhistory)
             else:
-                self.reportstatus.signal.emit("RFID # unassigned")
+                self.reportstatus.signal.emit("RFID # unassigned", "")
         except exceptions.NotFound:
             print("No AttnHistory document found for " + name )
+
+if __name__ == "__main__":
+    signinout = SignInOut()
+    signinout.process("3699937085")
