@@ -105,6 +105,7 @@ class SignInOut(QObject):
         except exceptions.NotFound:
             print("No AttnHistory document found for " + name )
 
+""" For local debugging only """
 if __name__ == "__main__":
     signinout = SignInOut()
     signinout.process("3699937085")
