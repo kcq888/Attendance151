@@ -3,10 +3,12 @@ from SignInOut import SignInOut
 from AttendantModel import AttendantModel
 
 class Attendant(QObject):
+    nameChanged = Signal(str)
     statusChanged = Signal(str)
 
     def __init__(self, parent=None) -> None:
         super().__init__(parent=parent)
+        self.name_ = ""
         self.status_ = ""
         self.attendantModel_ = AttendantModel()
 
@@ -15,6 +17,14 @@ class Attendant(QObject):
 
     def attendantModel(self):
         return self.attendantModel_
+
+    def get_name(self):
+        return self.name_
+
+    def set_name(self, name):
+        if (self.name_ != name):
+            self.name_ = name
+            self.nameChanged.emit(name)
 
     def get_status(self):
         return self.status_
@@ -42,7 +52,9 @@ class Attendant(QObject):
     @Slot(str)
     def updateStatus(self, name, status):
         print("updateStatus: ", status)
-        self.set_status(name + " " + status)
+        self.set_name(name)
+        self.set_status(status)
         self.addAttendant(name, status)
 
+    name = Property(str, fget=get_name, fset=set_name, notify=nameChanged)
     status = Property(str, fget=get_status, fset=set_status, notify=statusChanged)
