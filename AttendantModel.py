@@ -9,11 +9,8 @@ class AttendantModel(QAbstractListModel):
         super().__init__(parent=parent)
         self.member_ = ""
         self.headers = [self.Name, self.Status]
-        self.attendants = [
-            ["Peter Malony", "Sign In"],
-            ["Stephany Smith", "Sign Out"],
-            ["John Jones", "Sign In"]
-        ]
+        # two dimentional array
+        self.attendants = [[]]
 
     """ Returns the number of rows the model holds. """
     def rowCount(self, parent=QModelIndex()):
