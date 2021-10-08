@@ -75,6 +75,8 @@ class AttendantModel(QAbstractListModel):
     def isExist(self, name):
         """ Find if given name already exist in the attendant list """
         attns = np.array(self.attendants)
+        if attns.size == 0:
+             return None
         y, x = np.where(attns == name)
         if not len(y) == 0:
             return y[0]
