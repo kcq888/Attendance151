@@ -54,7 +54,8 @@ class Attendant(QObject):
         print("updateStatus: ", status)
         self.set_name(name)
         self.set_status(status)
-        self.addAttendant(name, status)
+        if status == SignInOut.SignIn or status == SignInOut.SignOut:
+            self.addAttendant(name, status)
 
     name = Property(str, fget=get_name, fset=set_name, notify=nameChanged)
     status = Property(str, fget=get_status, fset=set_status, notify=statusChanged)

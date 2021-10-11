@@ -77,10 +77,13 @@ class AttendantModel(QAbstractListModel):
         attns = np.array(self.attendants)
         if attns.size == 0:
              return None
-        y, x = np.where(attns == name)
-        if not len(y) == 0:
-            return y[0]
-        else:
+        try:
+            y, x = np.where(attns == name)
+            if not len(y) == 0:
+                return y[0]
+            else:
+                return None
+        except:
             return None
 
     def updateStatus(self, name, status):

@@ -29,7 +29,6 @@ import AttendantModel 1.0
         id: appGrid
         
         anchors.fill: parent
-        
         columns: 2
         rows: 1
         columnSpacing: 10
@@ -46,6 +45,7 @@ import AttendantModel 1.0
             Layout.margins: 20
             
             Row {
+                id: header
                 Image {
                     id: image
                     width: 100
@@ -91,6 +91,7 @@ import AttendantModel 1.0
             }
             TextField {
                 id: rfidTextField
+                anchors.top: header.bottom
                 placeholderText: qsTr("Scan Name Tag")
                 focus: true
                 onAccepted: {
@@ -99,14 +100,25 @@ import AttendantModel 1.0
                     rfidTextField.text = ""
                 }
             }
-            RowLayout {
+            Column {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                
                 Text {
                     id: nameText
                     font.family: "Verdana"
                     font.bold: true
                     font.pointSize: 24
                     color: "white"
-                    text: attendant.status
+                    text: attendant.name
+                }
+                Text {
+                    id: statusText
+                    font.family: "Verdana"
+                    font.bold: true
+                    font.pointSize: 24
+                    color: "white"       
+                    text: attendant.status     
                 }
             }
         }
