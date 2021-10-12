@@ -110,3 +110,6 @@ class AttendantModel(QAbstractListModel):
         for i, header in enumerate(self.headers):
             roles[Qt.UserRole + i + 1] = header.encode()
         return roles
+
+    def clearAttendants(self):
+        self.attendants.clear()

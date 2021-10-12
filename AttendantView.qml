@@ -4,10 +4,12 @@ import QtQuick.Layouts 1.1
 import AttendantModel 1.0
 
  Item {
-    id: app
+    id: appAttend
     width: parent.width
     height: parent.height
     objectName: "attendant"
+    
+    signal dateChanged()
 
     Rectangle {
         id: attendantBackground
@@ -91,7 +93,6 @@ import AttendantModel 1.0
             }
             TextField {
                 id: rfidTextField
-                anchors.top: header.bottom
                 placeholderText: qsTr("Scan Name Tag")
                 focus: true
                 onAccepted: {
@@ -100,10 +101,7 @@ import AttendantModel 1.0
                     rfidTextField.text = ""
                 }
             }
-            Column {
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-                
+            Column {                
                 Text {
                     id: nameText
                     font.family: "Verdana"
@@ -226,6 +224,8 @@ import AttendantModel 1.0
             //interval = 1000 * (60 - date.getSeconds())
 
             currentDate.text = date.toLocaleDateString(Qt.locale(), "dddd MMMM d yyyy")
+            if (date.getHours() === 0 && date.getMinutes() === 59)
+                appAttend.dateChanged()
             restart()
         }
     }

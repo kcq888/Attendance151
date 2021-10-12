@@ -1,4 +1,6 @@
 from typing_extensions import Annotated
+
+from PySide2 import QtCore
 from Attendant import Attendant
 import os, sys
 from PySide2.QtQml import QQmlApplicationEngine
@@ -25,6 +27,9 @@ context.setContextProperty("attendant", attendant)
 
 # loading qml
 engine.load(QUrl.fromLocalFile(os.path.abspath(qml_file)))
+mainWindow = engine.rootObjects()[0]
+appAttend = mainWindow.findChild(QtCore.QObject, "attendant")
+appAttend.dateChanged.connect(attendant.clearAttendants)
 engine.quit.connect(app.quit)
 
 #execute and cleanup

@@ -57,5 +57,9 @@ class Attendant(QObject):
         if status == SignInOut.SignIn or status == SignInOut.SignOut:
             self.addAttendant(name, status)
 
+    @Slot()
+    def clearAttendants(self):
+        self.attendantModel_.clearAttendants()
+
     name = Property(str, fget=get_name, fset=set_name, notify=nameChanged)
     status = Property(str, fget=get_status, fset=set_status, notify=statusChanged)
