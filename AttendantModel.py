@@ -1,4 +1,3 @@
-import numpy as np
 from PySide2.QtCore import Slot, QAbstractListModel, QModelIndex, Qt
 
 class AttendantModel(QAbstractListModel):
