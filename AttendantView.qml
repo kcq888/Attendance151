@@ -224,7 +224,7 @@ import AttendantModel 1.0
             //interval = 1000 * (60 - date.getSeconds())
 
             currentDate.text = date.toLocaleDateString(Qt.locale(), "dddd MMMM d yyyy")
-            if (date.getHours() === 0 && date.getMinutes() === 59)
+            if (date.getHours() === 0 && date.getMinutes() === 0)
                 appAttend.dateChanged()
             restart()
         }

@@ -14,8 +14,8 @@ from firebase_admin import firestore
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
 # The ID and range of the registration spreadsheet
-REGISTRATION_SHEET_ID = '1AklI4IdIZcjX_kzWc8OXhZjkxaJs4wFg3NmsEE4M-uI'
-REGISTRATION_RANG_RFID = 'Registration!A2:D'
+REGISTRATION_SHEET_ID = '1TXYp6vhDVhiGli1m3Pd_WHVYn7-3wwK9Me8T6FBENAA'
+REGISTRATION_RANG_RFID = 'Y2021-2022-Roster!A2:D'
 
 class SheetToFirestore():
     Season = "Season2021-2022"
@@ -64,13 +64,13 @@ class SheetToFirestore():
             seaon_collection = self.db.collection(self.Season)
             for row in values:
                 # Print columns A and E, which correspond to indices 0 and 4.
-                print('%s, %s, %s' % (row[0], row[1], row[2]))
-                rfid_ref = seaon_collection.document(row[0])
+                print('%s, %s, %s' % (row[2], row[0], row[1]))
+                rfid_ref = seaon_collection.document(row[2])
                 rfid_ref.collection(self.AttnHistory).document(self.History).set({})
                 rfid_ref.set({
-                     u'First' : row[2],
-                     u'Last' : row[1],
-                     u"RFIDTag" : row[0]
+                     u'First' : row[1],
+                     u'Last' : row[0],
+                     u"RFIDTag" : row[2]
                 })
         else:
             print("No data found!")

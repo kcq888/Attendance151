@@ -74,16 +74,17 @@ class AttendantModel(QAbstractListModel):
 
     def isExist(self, name):
         """ Find if given name already exist in the attendant list """
-        attns = np.array(self.attendants)
-        if attns.size == 0:
-             return None
-        try:
-            y, x = np.where(attns == name)
-            if not len(y) == 0:
-                return y[0]
-            else:
-                return None
-        except:
+        index = 0
+        isFound = False
+
+        for attn in self.attendants:
+            if (name in attn):
+                isFound = True
+                index += 1
+
+        if (isFound):
+            return index - 1
+        else:
             return None
 
     def updateStatus(self, name, status):
@@ -112,4 +113,6 @@ class AttendantModel(QAbstractListModel):
         return roles
 
     def clearAttendants(self):
+        self.beginResetModel()
         self.attendants.clear()
+        self.endResetModel()
