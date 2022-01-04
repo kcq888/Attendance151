@@ -77,9 +77,10 @@ class AttendantModel(QAbstractListModel):
         isFound = False
 
         for attn in self.attendants:
+            index += 1
             if (name in attn):
                 isFound = True
-                index += 1
+                break
 
         if (isFound):
             return index - 1
