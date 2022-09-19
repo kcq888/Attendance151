@@ -11,7 +11,7 @@ from PySide2.QtCore import QDateTime, Slot, QObject
 from AttnSignal import AttnSignal
 
 class SignInOut(QObject):
-    Season = "Season2021-2022"
+    Season = "Season2022-2023"
     AttnHistory = "AttnHistory"
     History = "History"
     SignIn = "SignIn"

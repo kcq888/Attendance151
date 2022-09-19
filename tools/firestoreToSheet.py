@@ -14,7 +14,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 
 class FirestoreToSheet():
-    Season = "Season"
+    Season = "Season2022-2023"
     Members = "members"
     AppConfig = "AppConfig"
     SignIn = "SignIn"
