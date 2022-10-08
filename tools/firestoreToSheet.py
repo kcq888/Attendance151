@@ -12,6 +12,8 @@ from google.auth.transport.requests import Request
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+from openpyxl import Workbook
+from openpyxl.styles import Font
 
 class FirestoreToSheet():
     Season = "Season2022-2023"
@@ -20,8 +22,8 @@ class FirestoreToSheet():
     SignIn = "SignIn"
     SignOut = "SignOut"
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets', "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
-    SAMPLE_SPREADSHEET_ID = '1ZuJ6lqo244thz6pHf35Egnb9CJY_v_PE7r3jc9aQqdA'
-    Logdate = "Log2252020"
+    SAMPLE_SPREADSHEET_ID = '1aPZODds6OEt_uinIIGFDINqfkJbxqFuf3Pn_08Hd5WA'
+    Logdate = "Log1052022"
 
     def __init__(self):
         # Firestore setup
@@ -53,11 +55,6 @@ class FirestoreToSheet():
         self.value_input_option = 'USER_ENTERED'
         self.insert_data_option = 'OVERWRITE'
 
-
-        # Get the Season document name from the AppConfig
-        appconfig = self.db.collection(self.Members).document(self.AppConfig).get()
-        self.season = appconfig.get(self.Season)
-
     def utcToLocal(self, utctime):
         local_timezone = tzlocal.get_localzone()
         return utctime.replace(tzinfo=pytz.utc).astimezone(local_timezone)
@@ -72,7 +69,7 @@ class FirestoreToSheet():
             request = self.service.spreadsheets().values().append(spreadsheetId=self.SAMPLE_SPREADSHEET_ID, range=range, valueInputOption=self.value_input_option, insertDataOption=self.insert_data_option, body=value_range_body)
             response = request.execute()
 
-    def getAttendHistory(self, name, docref):
+    def getAttendHistory(self, name, docref, ws):
          attnHistory = docref.collection('AttnHistory')
          if attnHistory is not None:
              docs = attnHistory.list_documents()
@@ -82,6 +79,8 @@ class FirestoreToSheet():
                 for key in signinout.keys():
                     signin = True;
                     signout = True;
+                    singindatetime = None
+                    signoutdatetime = None
                     if (key == self.Logdate):
                         try:
                             signintime = signinout[self.Logdate][self.SignIn]
@@ -90,7 +89,8 @@ class FirestoreToSheet():
                             self.appendGoogleSheet(rangeName, name)
                             print(signinout[self.Logdate][self.SignIn])
                             rangeSignin = self.Logdate + '!' + self.signin + str(self.index) + ':' + self.signin + str(self.index)
-                            self.appendGoogleSheet(rangeSignin, signintime.strftime("%m/%d/%Y, %H:%M:%S"))
+                            singindatetime = signintime.strftime("%m/%d/%Y, %H:%M:%S")
+                            # self.appendGoogleSheet(rangeSignin, signintime.strftime("%m/%d/%Y, %H:%M:%S"))
                         except KeyError:
                             print('Signin not found!')
                             signin = False
@@ -99,15 +99,19 @@ class FirestoreToSheet():
                             signouttime = self.utcToLocal(signouttime)
                             print(signinout[self.Logdate][self.SignOut])
                             rangeSignout = self.Logdate + '!' + self.signout + str(self.index) + ':' + self.signout + str(self.index)
-                            self.appendGoogleSheet(rangeSignout, signouttime.strftime("%m/%d/%Y, %H:%M:%S"))
+                            signoutdatetime = signouttime.strftime("%m/%d/%Y, %H:%M:%S")
+                            # self.appendGoogleSheet(rangeSignout, signouttime.strftime("%m/%d/%Y, %H:%M:%S"))
                         except KeyError:
                             print('Signout not found!')
                             signout = False;
                         if (signin == True or signout == True):
                             self.index = self.index + 1
+                        ws.append([name, singindatetime, signoutdatetime])
 
     def getAttendants(self):
-        attendants = self.db.collection(self.Members).list_documents()
+        wb = self.setupWorkbook()
+        ws = wb.active
+        attendants = self.db.collection(self.Season).list_documents()
         for attendant in attendants:
             doc = attendant.get()
             try:
@@ -115,7 +119,19 @@ class FirestoreToSheet():
                 print(name)
             except KeyError:
                 print('AppConfig document reached')
-            self.getAttendHistory(name, attendant)
+            self.getAttendHistory(name, attendant, ws)
+        attendantLog = os.getcwd() + "/Attendant.xlsx"
+        wb.save(attendantLog)
+
+    def setupWorkbook(self):
+        print("setupWorkbook")
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Attendant"
+        ws.append(["Name", "sign In", "Sign Out"])
+        for cell in ws[1]:  # loop through all cells and set the font to bold
+            cell.font = Font(bold=True)
+        return wb
 
 if __name__ == "__main__":
     db = FirestoreToSheet()

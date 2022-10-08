@@ -14,7 +14,7 @@ from firebase_admin import firestore
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
 # The ID and range of the registration spreadsheet
-REGISTRATION_SHEET_ID = '1wUEPkv4biwo4ZpS8PWCc2d35fHxbmCZdJt0Hlw2q9DI'
+REGISTRATION_SHEET_ID = '1VSeP_-7nm2ea-nT4Y4lWOJVEgudvSIiYCJF3Jr0UQdA'
 REGISTRATION_RANG_RFID = 'Registration!A2:D'
 
 class SheetToFirestore():
@@ -48,7 +48,7 @@ class SheetToFirestore():
         self.service = build('sheets', 'v4', credentials=self.gscreds)
         self.index = 2
         self.rfidtag = 'A'
-        self.name = 'B'
+        self.name = 'B' 
 
     def createFirestore(self):
         # open the google sheet and read each row
