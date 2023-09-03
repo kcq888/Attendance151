@@ -1,12 +1,12 @@
 from typing_extensions import Annotated
 
-from PySide2 import QtCore
+from PySide6 import QtCore
 from Attendant import Attendant
 import os, sys
-from PySide2.QtQml import QQmlApplicationEngine
-from PySide2.QtGui import QGuiApplication
-from PySide2.QtCore import QObject, QUrl
-from PySide2.QtQml import qmlRegisterType
+from PySide6.QtQml import QQmlApplicationEngine
+from PySide6.QtGui import QGuiApplication
+from PySide6.QtCore import QObject, QUrl
+from PySide6.QtQml import qmlRegisterType
 from AttendantModel import AttendantModel
 
 app = QGuiApplication(sys.argv)

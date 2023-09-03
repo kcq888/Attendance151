@@ -16,7 +16,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font
 
 class FirestoreToSheet():
-    Season = "Season2022-2023"
+    Season = "Season2023-2024"
     Members = "members"
     AppConfig = "AppConfig"
     SignIn = "SignIn"

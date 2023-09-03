@@ -1,6 +1,6 @@
-from PySide2.QtCore import Slot, QAbstractListModel, QModelIndex, Qt
+from PySide6.QtCore import QAbstractTableModel, QModelIndex, Qt
 
-class AttendantModel(QAbstractListModel):
+class AttendantModel(QAbstractTableModel):
     Name = "Name"
     Status = "Status"
 
@@ -9,7 +9,7 @@ class AttendantModel(QAbstractListModel):
         self.member_ = ""
         self.headers = [self.Name, self.Status]
         # two dimentional array
-        self.attendants = [[]]
+        self.attendants = []
 
     """ Returns the number of rows the model holds. """
     def rowCount(self, parent=QModelIndex()):
@@ -24,17 +24,16 @@ class AttendantModel(QAbstractListModel):
         "invalid QVariant").
     """
     def data(self, index, role=Qt.DisplayRole):
-        row = index.row()
-        if 0 <= row < self.rowCount():
-            if role in self.roleNames():
-                name_role = self.roleNames()[role].decode()
-                col = self.headers.index(name_role)
-                return self.attendants[row][col]
+        if (role == Qt.DisplayRole):
+            cell = self.attendants[index.row()][index.column()]
+            return cell
 
     def headerData(self, section, orientation, role=Qt.DisplayRole):
-        """ Set the headers to be displayed. """
-        if role == Qt.DisplayRole and 0 <= section < len(self.headers):
-            return self.headers[section]
+        if role == Qt.DisplayRole:
+            if orientation == Qt.Horizontal:
+                return self.headers[section]
+            else:
+                return str(section)
 
     def insertRows(self, position, rows=1, index=QModelIndex()):
         """ Insert a row into the model. """
@@ -92,7 +91,7 @@ class AttendantModel(QAbstractListModel):
         row = self.isExist(name)
         if not row == None:
             self.attendants[row][1] = status
-            idx = self.index(row, 0, QModelIndex())
+            idx = self.index(row, 1, QModelIndex())
             if idx.isValid:
                 self.dataChanged.emit(idx, idx)
 
@@ -105,12 +104,6 @@ class AttendantModel(QAbstractListModel):
             return Qt.ItemIsEnabled
         return Qt.ItemFlags(QAbstractListModel.flags(self, index) |
                             Qt.ItemIsEditable)
-
-    def roleNames(self):
-        roles = {}
-        for i, header in enumerate(self.headers):
-            roles[Qt.UserRole + i + 1] = header.encode()
-        return roles
 
     def clearAttendants(self):
         self.beginResetModel()

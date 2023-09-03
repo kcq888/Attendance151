@@ -18,7 +18,7 @@ REGISTRATION_SHEET_ID = '1VSeP_-7nm2ea-nT4Y4lWOJVEgudvSIiYCJF3Jr0UQdA'
 REGISTRATION_RANG_RFID = 'Registration!A2:D'
 
 class SheetToFirestore():
-    Season = "Season2022-2023"
+    Season = "Season2023-2024"
     History = "History"
     AttnHistory = "AttnHistory"
 

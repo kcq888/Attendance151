@@ -3,3 +3,5 @@ google-auth-httplib2
 google-auth-oauthlib
 firebase
 firebase_admin
+typing-extensions
+pyside6

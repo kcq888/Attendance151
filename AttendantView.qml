@@ -1,5 +1,5 @@
-import QtQuick 2.6
-import QtQuick.Controls 1.4
+import QtQuick 2.15
+import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.1
 import AttendantModel 1.0
 
@@ -91,6 +91,10 @@ import AttendantModel 1.0
                     }                
                 }
             }
+            Item {
+                height: 20
+                width: parent.width
+            }
             TextField {
                 id: rfidTextField
                 placeholderText: qsTr("Scan Name Tag")
@@ -143,62 +147,71 @@ import AttendantModel 1.0
                     fontSizeMode: Text.HorizontalFit
                     renderType: Text.QtRendering
                     lineHeight: 1
+                    height: 40
                 }
             }
+
             TableView {
                 id: statusTable
-                width: parent.width - 80
                 height: parent.height - attendRow.height
+                width: parent.width
+                columnWidthProvider: function (column) { return parent.width/2 - 40 }
+                rowHeightProvider: function (column) { return 35; }
+                topMargin: columnsHeader.implicitHeight
+                ScrollBar.horizontal: ScrollBar{}
+                ScrollBar.vertical: ScrollBar{}
+                clip: true
 
                 model: attendantModel
 
-                TableViewColumn {
-                    id: nameColumn
-                    role: "Name"
-                    title: "Name"
-                    width: parent.width / 4
-                }
-                TableViewColumn {
-                    id: statusColumn
-                    role: "Status"
-                    title: "Status"
-                    width: statusTable.width - nameColumn.width - 2
-                }
-
-                headerDelegate: Rectangle {
-                    color: "#800080"
-                    height: 25
-                    Text {
-                        text: styleData.value
-                        color: "#FFF"
-                        width: parent.width
-                        height: parent.height
-                        font.pointSize: 20
-                        font.family: "Verdana"
-                        minimumPointSize: 3
-                        fontSizeMode: Text.Fit
-                        font.bold: true
-                        leftPadding: 5.0
-                        horizontalAlignment: Text.AlignLeft
-                        verticalAlignment: Text.AlignVCenter
-                    }
-                }
-
-                itemDelegate: Rectangle {
+                delegate: Rectangle {
+                    border.width: 1
+                    border.color: "blue"
                     color: ["#f0ffff", "#d3d3d3"][styleData.row % 2]
-                    height: 20
                     Text {
-                        text: styleData.value
+                        text: display
+                        anchors.fill: parent
+                        anchors.margins: 10
                         color: "#191970"
-                        font.pointSize: 16
-                        minimumPointSize: 3
                         fontSizeMode: Text.Fit
                         font.family: "Verdana"
+                        font.pixelSize: 16
                         leftPadding: 5.0
                         horizontalAlignment: Text.AlignLeft
                         verticalAlignment: Text.AlignVCenter
                     }
                 }
+                Rectangle { // mask the headers
+                    z: 3
+                    color: "gray"
+                    y: statusTable.contentY
+                    x: statusTable.contentX
+                    width: statusTable.leftMargin
+                    height: statusTable.topMargin
+                }
+
+                Row {
+                    id: columnsHeader
+                    y: statusTable.contentY
+                    z: 2
+                    Repeater {
+                        model: statusTable.columns > 0 ? statusTable.columns : 1
+                        Label {
+                            width: statusTable.columnWidthProvider(modelData)
+                            height: 40
+                            text: attendantModel.headerData(modelData, Qt.Horizontal)
+                            color: 'white'
+                            font.pixelSize: 15
+                            font.bold: true
+                            padding: 10
+                            verticalAlignment: Text.AlignVCenter
+
+                            background: Rectangle { color: "purple" }
+                        }
+                    }
+                }
+                ScrollIndicator.horizontal: ScrollIndicator { }
+                ScrollIndicator.vertical: ScrollIndicator { }
 
                 Component.onCompleted: {
                     console.debug("parent height: ", parent.height)
@@ -206,8 +219,7 @@ import AttendantModel 1.0
 
                     var maxheight = appContentRight.height - attendRow.height - 40
                     console.debug("tableview max height:", maxheight)
-                }
-                
+                }                
             }
         }
     }

@@ -1,4 +1,4 @@
-from PySide2.QtCore import QModelIndex, QObject, Signal, Slot, QThread, Property, Qt
+from PySide6.QtCore import QModelIndex, QObject, Signal, Slot, QThread, Property, Qt
 from SignInOut import SignInOut
 from AttendantModel import AttendantModel
 
@@ -56,6 +56,8 @@ class Attendant(QObject):
         self.set_status(status)
         if status == SignInOut.SignIn or status == SignInOut.SignOut:
             self.addAttendant(name, status)
+        else:
+            self.status = status
 
     @Slot()
     def clearAttendants(self):
