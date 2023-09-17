@@ -14,13 +14,12 @@ from firebase_admin import firestore
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
 # The ID and range of the registration spreadsheet
-REGISTRATION_SHEET_ID = '1VSeP_-7nm2ea-nT4Y4lWOJVEgudvSIiYCJF3Jr0UQdA'
-REGISTRATION_RANG_RFID = 'Registration!A2:D'
+REGISTRATION_SHEET_ID = '19ZccrRYr2O_GN2P27Yn8a62duCkYewjoAoq_F6yU_A4'
+REGISTRATION_RANG_RFID = 'Roster-2023-2024!A2:D'
 
 class SheetToFirestore():
     Season = "Season2023-2024"
-    History = "History"
-    AttnHistory = "AttnHistory"
+    RFIDS = "members/rfids"
 
     def __init__(self) -> None:
         # Firestore setup
@@ -61,12 +60,12 @@ class SheetToFirestore():
 
         if values:
             print('RFID, Last, First:')
-            seaon_collection = self.db.collection(self.Season)
+            seaon_collection = self.db.collection(self.Season + '/' + self.RFIDS)
             for row in values:
                 # Print columns A and E, which correspond to indices 0 and 4.
                 print('%s, %s, %s' % (row[2], row[0], row[1]))
                 rfid_ref = seaon_collection.document(row[2])
-                rfid_ref.collection(self.AttnHistory).document(self.History).set({})
+                rfid_ref.set({})
                 rfid_ref.set({
                      u'First' : row[0],
                      u'Last' : row[1],
