@@ -1,6 +1,6 @@
 # PySide2 Imports
-from PySide2 import QtCore
-from PySide2.QtCore import Signal, Slot, QObject
+from PySide6 import QtCore
+from PySide6.QtCore import Signal, QObject
 
 class AttnSignal(QObject):
-    signal = Signal(str)
+    signal = Signal(str, str)

@@ -1,80 +1,67 @@
-# PySide2 Imports
-from PySide2 import QtCore, QtGui, QtWidgets
-from PySide2.QtCore import QDateTime, Slot
-# Application Imports
-from DigitalClock import DigitalClock
+from PySide6.QtCore import QModelIndex, QObject, Signal, Slot, QThread, Property, Qt
 from SignInOut import SignInOut
+from AttendantModel import AttendantModel
 
-class Attendant(QtWidgets.QWidget):
+class Attendant(QObject):
+    nameChanged = Signal(str)
+    statusChanged = Signal(str)
 
-    def __init__(self, parent=None):
-        super(Attendant, self).__init__(parent)
-        font = QtGui.QFont("Verdana", 16, QtGui.QFont.Bold)
-        font.setStyleHint(QtGui.QFont.System)
-        
-        pixmap = QtGui.QPixmap("./assets/images/2018_Logo.png")
-        pixmap = pixmap.scaled(100, 100)
-        imageLabel = QtWidgets.QLabel()
-        imageLabel.setPixmap(pixmap)
-        team151Label = QtWidgets.QLabel("Team 151 Attendant")
-        team151Label.setFixedHeight(50)
-        team151Label.setFixedWidth(300)
-        team151Label.setFont(font)
-        utc_fmt = "MM-dd-yyyy"
-        datetimeLabel = QtWidgets.QLabel(QDateTime().currentDateTime().toString(utc_fmt))
-        datetimeLabel.setFont(font)
-        self.attendeeLabel = QtWidgets.QLabel("")
-        self.attendeeLabel.setFont(font)
-        self.attendeeStatusLabel = QtWidgets.QLabel("")
-        self.attendeeStatusLabel.setFont(font)
-        clock = DigitalClock()
-        clock.setFixedWidth(200)
-        clock.setFixedHeight(80)
+    def __init__(self, season, parent=None) -> None:
+        super().__init__(parent=parent)
+        self.name_ = ""
+        self.status_ = ""
+        self.attendantModel_ = AttendantModel()
 
-        self.rfidinput = QtWidgets.QLineEdit()
-        self.rfidinput.setFocus()
-        self.rfidinput.setFixedWidth(100)
-        font = QtGui.QFont("Verdana", 14, QtGui.QFont.Helvetica)
-        self.rfidinput.setFont(font)
-
-        teamImageLayout = QtWidgets.QVBoxLayout()
-        teamImageLayout.addWidget(imageLabel)
-        teamImageLayout.addWidget(datetimeLabel)
-
-        teamInfoLayout = QtWidgets.QVBoxLayout()
-        teamInfoLayout.addWidget(team151Label)
-        teamInfoLayout.addWidget(clock)
-
-        memberLayout = QtWidgets.QVBoxLayout()
-        memberLayout.addWidget(self.attendeeLabel)
-        memberLayout.addWidget(self.attendeeStatusLabel)
-
-        mainLayout = QtWidgets.QGridLayout()
-        mainLayout.rowCount = 3
-        mainLayout.columnCount = 2
-        mainLayout.addLayout(teamImageLayout, 0, 0)
-        mainLayout.addLayout(teamInfoLayout, 0, 1)
-        mainLayout.addLayout(memberLayout, 2, 1)
-        mainLayout.addWidget(self.rfidinput, 2, 0)
-        self.setLayout(mainLayout)
-        self.setWindowTitle("151 Attendant")
-        clock.show()
-        
-        self.signinout = SignInOut()
-        self.signinout.reportname.signal.connect(self.updateName)
+        self.signinout = SignInOut(season)
         self.signinout.reportstatus.signal.connect(self.updateStatus)
-        self.rfidinput.editingFinished.connect(self.accept)
+
+    def attendantModel(self):
+        return self.attendantModel_
+
+    def get_name(self):
+        return self.name_
+
+    def set_name(self, name):
+        if (self.name_ != name):
+            self.name_ = name
+            self.nameChanged.emit(name)
+
+    def get_status(self):
+        return self.status_
+
+    def set_status(self, status):
+        if (self.status_ != status):
+            self.status_ = status
+            self.statusChanged.emit(status)
+
+    def addAttendant(self, name, status):
+        if self.attendantModel_.isExist(name) == None:
+            """ 1. Create the empty row"""
+            self.attendantModel_.insertRows(0)
+            """ 2. Get the index of the newly created row """
+            idx = self.attendantModel_.index(0, 0, QModelIndex())
+            """ 3. Set the columns values """
+            self.attendantModel_.setData(idx, name, status, Qt.EditRole)
+        else:
+            self.attendantModel_.updateStatus(name, status)
 
     @Slot(str)
-    def accept(self):
-        rfid = self.rfidinput.text()
+    def onRfidAccepted(self, rfid):
         self.signinout.process(rfid)
-        self.rfidinput.clear()
-    
-    @Slot(str)
-    def updateName(self, name):
-        self.attendeeLabel.setText(name)
 
     @Slot(str)
-    def updateStatus(self, status):
-        self.attendeeStatusLabel.setText(status)
+    def updateStatus(self, name, status):
+        print("updateStatus: ", status)
+        self.set_name(name)
+        self.set_status(status)
+        if status == SignInOut.SignIn or status == SignInOut.SignOut:
+            self.addAttendant(name, status)
+        else:
+            self.status = status
+
+    @Slot()
+    def clearAttendants(self):
+        self.attendantModel_.clearAttendants()
+
+    name = Property(str, fget=get_name, fset=set_name, notify=nameChanged)
+    status = Property(str, fget=get_status, fset=set_status, notify=statusChanged)
