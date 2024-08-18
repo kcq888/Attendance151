@@ -19,17 +19,18 @@ class SignInOut(QObject):
     Members = "members"
     RFIDS = "rfids"
     RFIDTag = "RFIDTag"
-    Season = "Season2023-2024"
+    Season = ""
     SignIn = "SignIn"
     SignOut = "SignOut"
     AlreadySignOut = "Sorry, You have already been signed out!"
     Hours22 = 22*60*60
 
-    def __init__(self):
+    def __init__(self, season):
         self.cred = credentials.Certificate(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"))
         firebase_admin.initialize_app(self.cred)
         self.db = firestore.client()
         self.reportstatus = AttnSignal()
+        self.Season = season
 
     def processSignInOut(self, rfid, name):
         utcnow = QDateTime().currentDateTimeUtc()

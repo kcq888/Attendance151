@@ -6,13 +6,13 @@ class Attendant(QObject):
     nameChanged = Signal(str)
     statusChanged = Signal(str)
 
-    def __init__(self, parent=None) -> None:
+    def __init__(self, season, parent=None) -> None:
         super().__init__(parent=parent)
         self.name_ = ""
         self.status_ = ""
         self.attendantModel_ = AttendantModel()
 
-        self.signinout = SignInOut()
+        self.signinout = SignInOut(season)
         self.signinout.reportstatus.signal.connect(self.updateStatus)
 
     def attendantModel(self):
