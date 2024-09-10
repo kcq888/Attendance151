@@ -42,7 +42,6 @@ class SignInOut(QObject):
         # get the document snapshot
         colref = self.db.collection(self.Season, self.Meetings, self.Dates)
         logdate = "{:02d}{:02d}{}".format(now.date().month(),now.date().day(),now.date().year())
-        logtime = "{:02d}{:02d}{:02d}".format(now.time().hour(), now.time().minute(), now.time().second())
         docname = rfid + "_" + logdate
         results = colref.where(self.RFIDTag, '==', rfid).where(self.Date, "==", logdate).get()
         try:
