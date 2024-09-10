@@ -12,7 +12,7 @@
             "console": "integratedTerminal",
             "args": ["-s", "Season2024-2025"],
             "env": {
-                "GOOGLE_APPLICATION_CREDENTIALS" : "C:\\FIRST\\FRC\\Attendance151\\attendant.json"
+                "GOOGLE_APPLICATION_CREDENTIALS" : "${workspaceFolder}/attendance.json"
             }
         }
     ]

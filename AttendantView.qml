@@ -95,34 +95,6 @@ import AttendantModel 1.0
                 height: 20
                 width: parent.width
             }
-            TextField {
-                id: rfidTextField
-                placeholderText: qsTr("Scan Name Tag")
-                focus: true
-                onAccepted: {
-                    //console.debug("RFID: ", rfidTextField.text)
-                    attendant.onRfidAccepted(rfidTextField.text)
-                    rfidTextField.text = ""
-                }
-            }
-            Column {                
-                Text {
-                    id: nameText
-                    font.family: "Verdana"
-                    font.bold: true
-                    font.pointSize: 24
-                    color: "white"
-                    text: attendant.name
-                }
-                Text {
-                    id: statusText
-                    font.family: "Verdana"
-                    font.bold: true
-                    font.pointSize: 24
-                    color: "white"       
-                    text: attendant.status     
-                }
-            }
         }
         Column {
             id: appContentRight
@@ -143,11 +115,32 @@ import AttendantModel 1.0
                     text: qsTr("Today's Attendant")
                     font.family: "Verdana"
                     font.bold: true
-                    font.pointSize: 22
+                    font.pointSize: 20
                     fontSizeMode: Text.HorizontalFit
                     renderType: Text.QtRendering
                     lineHeight: 1
                     height: 40
+                    width: 200
+                }
+                TextField {
+                    id: rfidTextField
+                    Layout.leftMargin: 10
+                    placeholderText: qsTr("Scan Name Tag")
+                    focus: true
+                    onAccepted: {
+                        //console.debug("RFID: ", rfidTextField.text)
+                        attendant.onRfidAccepted(rfidTextField.text)
+                        rfidTextField.text = ""
+                    }
+                }
+                 Text {
+                    id: nameText
+                    leftPadding: 10
+                    font.family: "Verdana"
+                    font.bold: true
+                    font.pointSize: 20
+                    color: "white"
+                    text: attendant.name
                 }
             }
 

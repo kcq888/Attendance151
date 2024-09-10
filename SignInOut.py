@@ -22,7 +22,8 @@ class SignInOut(QObject):
     Season = ""
     SignIn = "SignIn"
     SignOut = "SignOut"
-    AlreadySignOut = "Sorry, You have already been signed out!"
+    History = "AttnHistory"
+    SignInCount = "SignInCount"
     Hours22 = 22*60*60
 
     def __init__(self, season):
@@ -47,37 +48,45 @@ class SignInOut(QObject):
             if len(results) == 0:
                 ''' Document does not exist, create the document with SignIn data'''
                 docref = colref.document(docname)
-                wr = docref.create({
+                signInCount = 1
+                docref.create({
                     self.Date: logdate,
                     self.Name: name,
                     self.RFIDTag: rfid,
                     self.HasSignout: False,
+                    self.SignInCount: signInCount,
                     signtype : signdatetime,
-                    })
+                    self.History : {
+                        str(signInCount) : {
+                            signtype : signdatetime
+                        }
+                    }
+                })
             else: 
                 ''' Document already exist, and check for last scan'''
                 for doc in results:
                     data = doc.to_dict()
+                    hasSignOut = False
+                    signInCount = data[self.SignInCount]
                     if doc.id == docname and data[self.HasSignout]:
-                        print("You have already signout!!")
-                        signtype = self.AlreadySignOut
+                        signtype = self.SignIn
+                        signInCount = signInCount + 1
                     else:
-                        if doc.id == docname and data[self.Date] == logdate:
-                            lastSignInData = data[self.SignIn]
-                            prevsignin = datetime.datetime(lastSignInData.year, lastSignInData.month, lastSignInData.day, lastSignInData.hour, lastSignInData.minute, lastSignInData.second)
-                            delta = signdatetime - prevsignin
-                            if (delta.total_seconds() < self.Hours22):
-                                signtype = self.SignOut
-                            else:
-                                signtype = self.SignIn
-                            docref = doc.reference
-                            docref.update({
-                                self.HasSignout: True,
-                                self.SignOut: signdatetime
-                            })
+                        signtype = self.SignOut
+                        hasSignOut = True
+
+                    if doc.id == docname and data[self.Date] == logdate:
+                        docref = doc.reference
+                        docref.update({
+                            self.HasSignout: hasSignOut,
+                            self.SignInCount: signInCount,
+                            signtype: signdatetime,
+                            self.History + "." + 
+                                str(signInCount) + "." + signtype : signdatetime
+                        })
             self.reportstatus.signal.emit(name, signtype)
         except ValueError:
-            print('error')
+            print('value error')
 
     @Slot(str)
     def process(self, rfid):
