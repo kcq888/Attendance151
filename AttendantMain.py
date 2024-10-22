@@ -9,6 +9,8 @@ from PySide6.QtCore import QObject, QUrl, QCommandLineOption, QCommandLineParser
 from PySide6.QtQml import qmlRegisterType
 from AttendantModel import AttendantModel
 
+DEFAULT_SEASON = "Season2024-2025"
+
 def parse(app):
     """ parse the application arguments and options"""
     parser = QCommandLineParser()
@@ -37,6 +39,8 @@ qmlRegisterType(AttendantModel, "AttendantModel", 1, 0, "AttendantModel")
 
 # create context object and table view model
 season = parse(app)
+if not season:
+    Season = DEFAULT_SEASON
 attendant = Attendant(season)
 
 # setting context objects to QML
@@ -52,4 +56,4 @@ appAttend.dateChanged.connect(attendant.clearAttendants)
 engine.quit.connect(app.quit)
 
 #execute and cleanup
-app.exec_()
+app.exec()

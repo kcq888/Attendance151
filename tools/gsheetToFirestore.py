@@ -2,6 +2,7 @@
 from __future__ import print_function
 import os
 import pickle
+import argparse
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -14,14 +15,16 @@ from firebase_admin import firestore
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
 # The ID and range of the registration spreadsheet
-REGISTRATION_SHEET_ID = '19ZccrRYr2O_GN2P27Yn8a62duCkYewjoAoq_F6yU_A4'
-REGISTRATION_RANG_RFID = 'Roster-2023-2024!A2:D'
+REGISTRATION_RANG_RFID = 'Registration!A2:D'
 
 class SheetToFirestore():
-    Season = "Season2023-2024"
+    Season = None
+    SheetId = None
     RFIDS = "members/rfids"
 
-    def __init__(self) -> None:
+    def __init__(self, season, sheetId) -> None:
+        self.Season = season
+        self.SheetId = sheetId
         # Firestore setup
         self.fcred = credentials.Certificate(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"))
         firebase_admin.initialize_app(self.fcred)
@@ -54,7 +57,7 @@ class SheetToFirestore():
 
         # Call the Sheets API
         sheet = self.service.spreadsheets()
-        result = sheet.values().get(spreadsheetId=REGISTRATION_SHEET_ID,
+        result = sheet.values().get(spreadsheetId=self.SheetId,
                                     range=REGISTRATION_RANG_RFID).execute()
         values = result.get('values', [])
 
@@ -75,7 +78,14 @@ class SheetToFirestore():
             print("No data found!")
 
 if __name__ == "__main__":
-    sheetToFirestore = SheetToFirestore()
+    parser = argparse.ArgumentParser(
+        prog="gsheetToFirestore", 
+        description="Importing Attendance into database from Google sheet")
+    parser.add_argument('-s', '--season')
+    parser.add_argument('-sid', '--sheetId')
+
+    args = parser.parse_args()
+    sheetToFirestore = SheetToFirestore(args.season, args.sheetId)
     sheetToFirestore.createFirestore()
 
 
