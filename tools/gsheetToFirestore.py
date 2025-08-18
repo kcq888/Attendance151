@@ -6,6 +6,7 @@ import argparse
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+from googleapiclient.errors import HttpError
 # Firebase Imports
 import firebase_admin
 from firebase_admin import credentials
@@ -49,33 +50,39 @@ class SheetToFirestore():
 
         self.service = build('sheets', 'v4', credentials=self.gscreds)
         self.index = 2
-        self.rfidtag = 'A'
-        self.name = 'B' 
+        self.name = 'A' 
+        self.rfidtag = 'B'
+        self.role = 'C'
 
     def createFirestore(self):
         # open the google sheet and read each row
 
-        # Call the Sheets API
-        sheet = self.service.spreadsheets()
-        result = sheet.values().get(spreadsheetId=self.SheetId,
-                                    range=REGISTRATION_RANG_RFID).execute()
-        values = result.get('values', [])
+        try:
+            # Call the Sheets API
+            sheet = self.service.spreadsheets()
+            result = sheet.values().get(spreadsheetId=self.SheetId,
+                                        range=REGISTRATION_RANG_RFID).execute()
+            values = result.get('values', [])
 
-        if values:
-            print('RFID, Last, First:')
-            seaon_collection = self.db.collection(self.Season + '/' + self.RFIDS)
-            for row in values:
-                # Print columns A and E, which correspond to indices 0 and 4.
-                print('%s, %s, %s' % (row[2], row[0], row[1]))
-                rfid_ref = seaon_collection.document(row[2])
-                rfid_ref.set({})
-                rfid_ref.set({
-                     u'First' : row[0],
-                     u'Last' : row[1],
-                     u"RFIDTag" : row[2]
-                })
-        else:
-            print("No data found!")
+            if values:
+                print('RFID, Last, First:, Role:')
+                seaon_collection = self.db.collection(self.Season + '/' + self.RFIDS)
+                for row in values:
+                    # Print columns A and E, which correspond to indices 0 and 4.
+                    print('%s, %s, %s, %s' % (row[2], row[0], row[1], row[3]))
+                    rfid_ref = seaon_collection.document(row[2])
+                    rfid_ref.set({})
+                    rfid_ref.set({
+                        u'First' : row[0],
+                        u'Last' : row[1],
+                        u"RFIDTag" : row[2],
+                        u"Role" : row[3],
+                        u"attendanceCount" : 0
+                    })
+            else:
+                print("No data found!")
+        except HttpError as err:
+            print(err)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

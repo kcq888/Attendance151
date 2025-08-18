@@ -19,11 +19,13 @@ class SignInOut(QObject):
     Members = "members"
     RFIDS = "rfids"
     RFIDTag = "RFIDTag"
+    Role = "Role"
     Season = ""
     SignIn = "SignIn"
     SignOut = "SignOut"
     History = "AttnHistory"
     SignInCount = "SignInCount"
+    AttendanceCount = "attendanceCount"
     Hours22 = 22*60*60
 
     def __init__(self, season):
@@ -33,7 +35,7 @@ class SignInOut(QObject):
         self.reportstatus = AttnSignal()
         self.Season = season
 
-    def processSignInOut(self, rfid, name):
+    def processSignInOut(self, rfid, name, role="Member"):
         utcnow = QDateTime().currentDateTimeUtc()
         now = utcnow.toLocalTime()
         signdatetime = utcnow.toPython()
@@ -53,6 +55,7 @@ class SignInOut(QObject):
                     self.Date: logdate,
                     self.Name: name,
                     self.RFIDTag: rfid,
+                    self.Role: role,
                     self.HasSignout: False,
                     self.SignInCount: signInCount,
                     signtype : signdatetime,
@@ -80,11 +83,17 @@ class SignInOut(QObject):
                         docref.update({
                             self.HasSignout: hasSignOut,
                             self.SignInCount: signInCount,
+                            self.Role: role,
                             signtype: signdatetime,
                             self.History + "." + 
                                 str(signInCount) + "." + signtype : signdatetime
                         })
-            self.reportstatus.signal.emit(name, signtype)
+                        if signtype == self.SignOut and signInCount == 1:
+                            member_ref = self.db.collection(self.Season, self.Members, self.RFIDS).document(rfid)
+                            member_ref.set({
+                                self.AttendanceCount: firestore.Increment(1)
+                            }, merge=True)
+            self.reportstatus.signal.emit(name, signtype, role)
         except ValueError:
             print('value error')
 
@@ -98,11 +107,13 @@ class SignInOut(QObject):
         try:
             doc = docref.get()
             if doc.exists:
-                name = doc.get(u'First') + " " + doc.get(u'Last')
+                data = doc.to_dict()
+                name = data.get(u'First', '') + " " + data.get(u'Last', '')
+                role = data.get(self.Role)
                 # now process sign in and sign out
-                self.processSignInOut(rfid, name)
+                self.processSignInOut(rfid, name, role)
             else:
-                self.reportstatus.signal.emit("RFID # unassigned", "")
+                self.reportstatus.signal.emit("RFID # unassigned", "", "")
         except exceptions.NotFound:
             print("No AttnHistory document found for " + name )
 

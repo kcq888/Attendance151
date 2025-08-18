@@ -11,7 +11,7 @@
       "program": "${file}",
       "console": "integratedTerminal",
       "args": [
-        "-s", "Season2024-2025", "-sid", "18vRwbW5gEwPMeg7Bsh9_92S2x-OcImO88Tw9RasKfrw"
+        "-s", "Season2026-2027", "-sid", "1ILuXfSQWlMCKB-CGfwTHeDEtBADwU5GTPolss-1RrV0"
       ],
       "env": {
         "GOOGLE_APPLICATION_CREDENTIALS": "${workspaceFolder}/attendance.json"
@@ -23,7 +23,18 @@
       "request": "launch",
       "program": "${file}",
       "console": "integratedTerminal",
-      "args": ["-s", "Season2024-2025"],
+      "args": ["-s", "Season2025-2026"],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "${workspaceFolder}/attendance.json"
+      }
+    },
+    {
+      "name": "Python Collection Copy",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "args": ["-s", "Season2024-2025", "-d", "Season2025-2026"],
       "env": {
         "GOOGLE_APPLICATION_CREDENTIALS": "${workspaceFolder}/attendance.json"
       }
