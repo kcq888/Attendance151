@@ -9,7 +9,7 @@ from PySide6.QtCore import QObject, QUrl, QCommandLineOption, QCommandLineParser
 from PySide6.QtQml import qmlRegisterType
 from AttendantModel import AttendantModel
 
-DEFAULT_SEASON = "Season2024-2025"
+DEFAULT_SEASON = "Season2025-2026"
 
 def parse(app):
     """ parse the application arguments and options"""

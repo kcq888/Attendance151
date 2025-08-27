@@ -23,7 +23,7 @@
       "request": "launch",
       "program": "${file}",
       "console": "integratedTerminal",
-      "args": ["-s", "Season2024-2025"],
+      "args": ["-s", "Season2025-2026"],
       "env": {
         "GOOGLE_APPLICATION_CREDENTIALS": "${workspaceFolder}/attendance.json"
       }
