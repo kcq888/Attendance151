@@ -92,10 +92,269 @@ import AttendantModel 1.0
                 }
             }
             Item {
-                height: 20
+                height: 25
                 width: parent.width
             }
+
+            Label {
+                text: qsTr("Attendance Summary")
+                color: "#dae3d9"
+                font.family: "Verdana"
+                font.bold: true
+                font.pointSize: 20
+                fontSizeMode: Text.HorizontalFit
+                renderType: Text.QtRendering
+                height: 35
+            }
+
+            Rectangle {
+                id: summaryTableContainer
+                width: (parent.width - 40) * 0.55
+                height: 114
+                color: "transparent"
+                border.width: 1
+                border.color: "blue"
+                clip: true
+
+                Column {
+                    anchors.fill: parent
+
+                    // Header Row
+                    Row {
+                        width: parent.width
+                        height: 30
+
+                        Repeater {
+                            model: ["Role", "Sign In", "Sign Out", "Total"]
+                            Rectangle {
+                                width: index === 0 ? parent.width * 0.34 : (parent.width * 0.22)
+                                height: 30
+                                color: "purple"
+                                border.width: 1
+                                border.color: "blue"
+
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: modelData
+                                    color: "white"
+                                    font.family: "Verdana"
+                                    font.pixelSize: 12
+                                    font.bold: true
+                                }
+                            }
+                        }
+                    }
+
+                    // Member Row
+                    Row {
+                        width: parent.width
+                        height: 28
+
+                        Rectangle {
+                            width: parent.width * 0.34
+                            height: 28
+                            color: "#f7f8f8"
+                            border.width: 1
+                            border.color: "blue"
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: parent.left
+                                anchors.leftMargin: 8
+                                text: "Member"
+                                color: "#511778"
+                                font.family: "Verdana"
+                                font.pixelSize: 12
+                                font.bold: true
+                            }
+                        }
+                        Rectangle {
+                            width: parent.width * 0.22
+                            height: 28
+                            color: "#f7f8f8"
+                            border.width: 1
+                            border.color: "blue"
+                            Text {
+                                anchors.centerIn: parent
+                                text: attendantModel ? attendantModel.memberSignInCount : 0
+                                color: "#511778"
+                                font.family: "Verdana"
+                                font.pixelSize: 13
+                                font.bold: true
+                            }
+                        }
+                        Rectangle {
+                            width: parent.width * 0.22
+                            height: 28
+                            color: "#f7f8f8"
+                            border.width: 1
+                            border.color: "blue"
+                            Text {
+                                anchors.centerIn: parent
+                                text: attendantModel ? attendantModel.memberSignOutCount : 0
+                                color: "#511778"
+                                font.family: "Verdana"
+                                font.pixelSize: 13
+                                font.bold: true
+                            }
+                        }
+                        Rectangle {
+                            width: parent.width * 0.22
+                            height: 28
+                            color: "#f7f8f8"
+                            border.width: 1
+                            border.color: "blue"
+                            Text {
+                                anchors.centerIn: parent
+                                text: attendantModel ? attendantModel.memberTotalCount : 0
+                                color: "#511778"
+                                font.family: "Verdana"
+                                font.pixelSize: 13
+                                font.bold: true
+                            }
+                        }
+                    }
+
+                    // Mentor Row
+                    Row {
+                        width: parent.width
+                        height: 28
+
+                        Rectangle {
+                            width: parent.width * 0.34
+                            height: 28
+                            color: "#e7e2e2"
+                            border.width: 1
+                            border.color: "blue"
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: parent.left
+                                anchors.leftMargin: 8
+                                text: "Mentor"
+                                color: "#de570f"
+                                font.family: "Verdana"
+                                font.pixelSize: 12
+                                font.bold: true
+                            }
+                        }
+                        Rectangle {
+                            width: parent.width * 0.22
+                            height: 28
+                            color: "#e7e2e2"
+                            border.width: 1
+                            border.color: "blue"
+                            Text {
+                                anchors.centerIn: parent
+                                text: attendantModel ? attendantModel.mentorSignInCount : 0
+                                color: "#de570f"
+                                font.family: "Verdana"
+                                font.pixelSize: 13
+                                font.bold: true
+                            }
+                        }
+                        Rectangle {
+                            width: parent.width * 0.22
+                            height: 28
+                            color: "#e7e2e2"
+                            border.width: 1
+                            border.color: "blue"
+                            Text {
+                                anchors.centerIn: parent
+                                text: attendantModel ? attendantModel.mentorSignOutCount : 0
+                                color: "#de570f"
+                                font.family: "Verdana"
+                                font.pixelSize: 13
+                                font.bold: true
+                            }
+                        }
+                        Rectangle {
+                            width: parent.width * 0.22
+                            height: 28
+                            color: "#e7e2e2"
+                            border.width: 1
+                            border.color: "blue"
+                            Text {
+                                anchors.centerIn: parent
+                                text: attendantModel ? attendantModel.mentorTotalCount : 0
+                                color: "#de570f"
+                                font.family: "Verdana"
+                                font.pixelSize: 13
+                                font.bold: true
+                            }
+                        }
+                    }
+
+                    // Total Row
+                    Row {
+                        width: parent.width
+                        height: 28
+
+                        Rectangle {
+                            width: parent.width * 0.34
+                            height: 28
+                            color: "#d0c9e0"
+                            border.width: 1
+                            border.color: "blue"
+                            Text {
+                                anchors.verticalCenter: parent.verticalCenter
+                                anchors.left: parent.left
+                                anchors.leftMargin: 8
+                                text: "Total"
+                                color: "#191970"
+                                font.family: "Verdana"
+                                font.pixelSize: 12
+                                font.bold: true
+                            }
+                        }
+                        Rectangle {
+                            width: parent.width * 0.22
+                            height: 28
+                            color: "#d0c9e0"
+                            border.width: 1
+                            border.color: "blue"
+                            Text {
+                                anchors.centerIn: parent
+                                text: attendantModel ? attendantModel.totalSignInCount : 0
+                                color: "#191970"
+                                font.family: "Verdana"
+                                font.pixelSize: 13
+                                font.bold: true
+                            }
+                        }
+                        Rectangle {
+                            width: parent.width * 0.22
+                            height: 28
+                            color: "#d0c9e0"
+                            border.width: 1
+                            border.color: "blue"
+                            Text {
+                                anchors.centerIn: parent
+                                text: attendantModel ? attendantModel.totalSignOutCount : 0
+                                color: "#191970"
+                                font.family: "Verdana"
+                                font.pixelSize: 13
+                                font.bold: true
+                            }
+                        }
+                        Rectangle {
+                            width: parent.width * 0.22
+                            height: 28
+                            color: "#d0c9e0"
+                            border.width: 1
+                            border.color: "blue"
+                            Text {
+                                anchors.centerIn: parent
+                                text: attendantModel ? attendantModel.grandTotalCount : 0
+                                color: "#191970"
+                                font.family: "Verdana"
+                                font.pixelSize: 13
+                                font.bold: true
+                            }
+                        }
+                    }
+                }
+            }
         }
+
         Column {
             id: appContentRight
             width: parent.width / 2
@@ -140,7 +399,7 @@ import AttendantModel 1.0
                     font.bold: true
                     font.pointSize: 20
                     color: "white"
-                    text: attendant.name
+                    text: attendant ? attendant.name : ""
                 }
             }
 
@@ -148,7 +407,7 @@ import AttendantModel 1.0
                 id: statusTable
                 height: parent.height - attendRow.height
                 width: parent.width
-                columnWidthProvider: function (column) { return parent.width/2 - 40 }
+                columnWidthProvider: function (column) { return parent.width/3 - 40 }
                 rowHeightProvider: function (column) { return 35; }
                 topMargin: columnsHeader.implicitHeight
                 ScrollBar.horizontal: ScrollBar{}
@@ -160,12 +419,24 @@ import AttendantModel 1.0
                 delegate: Rectangle {
                     border.width: 1
                     border.color: "blue"
-                    color: ["#f0ffff", "#d3d3d3"][styleData.row % 2]
+                    color: ["#f7f8f8", "#e7e2e2"][row % 2]
+
+                    function getRoleColor(role) {
+                        switch (role) {
+                            case "Mentor":
+                                return "#de570f" // Orange for Mentors
+                            case "Member":
+                                return "#511778" // Purple for Members/Students
+                            default:
+                                return "#1b1919" // Black/dark grey for default
+                        }
+                    }
+
                     Text {
                         text: display
                         anchors.fill: parent
                         anchors.margins: 10
-                        color: "#191970"
+                        color: getRoleColor(memberRole)
                         fontSizeMode: Text.Fit
                         font.family: "Verdana"
                         font.pixelSize: 16
@@ -192,7 +463,9 @@ import AttendantModel 1.0
                         Label {
                             width: statusTable.columnWidthProvider(modelData)
                             height: 40
-                            text: attendantModel.headerData(modelData, Qt.Horizontal)
+                            text: (attendantModel && typeof attendantModel.headerData === "function") 
+                                  ? attendantModel.headerData(modelData, Qt.Horizontal) 
+                                  : ""
                             color: 'white'
                             font.pixelSize: 15
                             font.bold: true

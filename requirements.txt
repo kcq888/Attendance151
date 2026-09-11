@@ -5,3 +5,6 @@ firebase
 firebase_admin
 typing-extensions
 pyside6
+pytz
+tzlocal
+openpyxl

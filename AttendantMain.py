@@ -40,7 +40,7 @@ qmlRegisterType(AttendantModel, "AttendantModel", 1, 0, "AttendantModel")
 # create context object and table view model
 season = parse(app)
 if not season:
-    Season = DEFAULT_SEASON
+    season = DEFAULT_SEASON
 attendant = Attendant(season)
 
 # setting context objects to QML
@@ -50,10 +50,13 @@ context.setContextProperty("attendant", attendant)
 
 # loading qml
 engine.load(QUrl.fromLocalFile(os.path.abspath(qml_file)))
+if not engine.rootObjects():
+    sys.exit(-1)
 mainWindow = engine.rootObjects()[0]
 appAttend = mainWindow.findChild(QtCore.QObject, "attendant")
-appAttend.dateChanged.connect(attendant.clearAttendants)
+if appAttend:
+    appAttend.dateChanged.connect(attendant.clearAttendants)
 engine.quit.connect(app.quit)
 
 #execute and cleanup
-app.exec()
+sys.exit(app.exec())

@@ -16,13 +16,13 @@ from openpyxl import Workbook
 from openpyxl.styles import Font
 
 class FirestoreToSheet():
-    Season = "Season2023-2024"
+    Season = "Season2025-2026"
     Members = "members"
     AppConfig = "AppConfig"
     SignIn = "SignIn"
     SignOut = "SignOut"
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets', "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
-    SAMPLE_SPREADSHEET_ID = '1aPZODds6OEt_uinIIGFDINqfkJbxqFuf3Pn_08Hd5WA'
+    SAMPLE_SPREADSHEET_ID = '1HU3o-d53u1tE9vZLjnlCFDJ1NwlDU_gf4dgwLvrY-Ck'
     Logdate = "Log1052022"
 
     def __init__(self):

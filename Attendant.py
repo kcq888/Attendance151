@@ -34,28 +34,29 @@ class Attendant(QObject):
             self.status_ = status
             self.statusChanged.emit(status)
 
-    def addAttendant(self, name, status):
+    def addAttendant(self, name, status, role="Member"):
         if self.attendantModel_.isExist(name) == None:
-            """ 1. Create the empty row"""
-            self.attendantModel_.insertRows(0)
+            row = self.attendantModel_.rowCount()
+            """ 1. Create the empty row at the end of the model """
+            self.attendantModel_.insertRows(row)
             """ 2. Get the index of the newly created row """
-            idx = self.attendantModel_.index(0, 0, QModelIndex())
+            idx = self.attendantModel_.index(row, 0, QModelIndex())
             """ 3. Set the columns values """
-            self.attendantModel_.setData(idx, name, status, Qt.EditRole)
+            self.attendantModel_.setData(idx, name, status, role)
         else:
-            self.attendantModel_.updateStatus(name, status)
+            self.attendantModel_.updateStatus(name, status, role)
 
     @Slot(str)
     def onRfidAccepted(self, rfid):
         self.signinout.process(rfid)
 
-    @Slot(str)
-    def updateStatus(self, name, status):
-        print("updateStatus: ", status)
+    @Slot(str, str, str)
+    def updateStatus(self, name, status, role="Member"):
+        print("updateStatus: ", status, name, role)
         self.set_name(name)
         self.set_status(status)
         if status == SignInOut.SignIn or status == SignInOut.SignOut:
-            self.addAttendant(name, status)
+            self.addAttendant(name, status, role)
         else:
             self.status = status
 
